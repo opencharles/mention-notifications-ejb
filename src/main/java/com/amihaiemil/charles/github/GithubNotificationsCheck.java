@@ -8,7 +8,7 @@
  *  2)Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- *  3)Neither the name of charles-github-notifications-ejb nor the names of its
+ *  3)Neither the name of mention-notifications-ejb nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -26,7 +26,6 @@ package com.amihaiemil.charles.github;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -37,7 +36,6 @@ import javax.ejb.Startup;
 import javax.ejb.Timeout;
 import javax.ejb.TimerService;
 import javax.json.Json;
-import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.ws.rs.core.HttpHeaders;
@@ -49,7 +47,6 @@ import org.slf4j.LoggerFactory;
 
 import com.jcabi.http.Request;
 import com.jcabi.http.request.ApacheRequest;
-import com.jcabi.http.response.JsonResponse;
 import com.jcabi.http.response.RestResponse;
 
 /**
@@ -75,9 +72,14 @@ public class GithubNotificationsCheck {
     private TimerService timerService;
 
     /**
-     * Notifications' API endpoint.
+     * Github notifications.
      */
-    private String napiEndpoint;
+    private Notifications notificationsApi;
+
+    /**
+     * Api token.
+     */
+    private String token;
 
     /**
      * Default Ctor.
@@ -91,12 +93,16 @@ public class GithubNotificationsCheck {
 
     /**
      * Ctor.
-     * @param logger - for leveraging unit testing.
      * @param notificationsEp - Endpoint for Github notifications' check
+     * @param logger - for leveraging unit testing.
      */
-    public GithubNotificationsCheck(String notificationsEp, Logger logger) {
+    public GithubNotificationsCheck(String edp, Logger logger) {
         this.log = logger;
-        this.napiEndpoint = notificationsEp;
+        this.token = System.getProperty("github.auth.token");
+        if(token == null) {
+        	throw new IllegalStateException("Missing github.auth.token sys property!");
+        }
+        this.notificationsApi = new RtNotifications(new Mention(), token, edp);
     }
 
     /**
@@ -117,90 +123,48 @@ public class GithubNotificationsCheck {
         }
         timerService.createTimer(1000*60*intervalMinutes, 1000*60*intervalMinutes, null);
     }
-    
+
     /**
      * Read notifications from the Github API when the scheduler timeout occurs.
      */
     @Timeout
     public void readNotifications() {
-        String token = System.getProperty("github.auth.token");
-        String handlerEndpoint = System.getProperty("charles.rest.endpoint");
-
-        if(token == null || token.isEmpty()) {
-            log.error("Missing github.auth.token system property! Please specify the Github's agent authorization token!");
+        String handlerEndpoint = System.getProperty("post.rest.endpoint");
+        if(handlerEndpoint == null || handlerEndpoint.isEmpty()) {
+            log.error("Missing charles.rest.roken system property! Please specify the REST endpoint where notifications are posted!");
         } else {
-            if(handlerEndpoint == null || handlerEndpoint.isEmpty()) {
-                log.error("Missing charles.rest.roken system property! Please specify the REST endpoint where notifications are posted!");
-            } else {
-                Request req = new ApacheRequest(this.napiEndpoint);
-                req = req.header(
-                    HttpHeaders.AUTHORIZATION, String.format("token %s", token)
-                );
-                try {
-                    JsonArray notifications = req.fetch()
-                        .as(RestResponse.class).assertStatus(HttpURLConnection.HTTP_OK)
-                        .as(JsonResponse.class).json().readArray();
-                    log.info("Found " + notifications.size() + " new notifications!");
-                    if(notifications.size() > 0) {
-                        List<JsonObject> validNotifications = new ArrayList<JsonObject>();
-                        for(int i=0; i<notifications.size(); i++) {
-                            JsonObject notification = notifications.getJsonObject(i);
-                            if(this.isNotificationValid(notification)) {
-                                validNotifications.add(notification);
-                            }
-                        }
-                        log.info("POST-ing " + validNotifications.size() + " valid notifications!");
-                        boolean posted = this.postNotifications(handlerEndpoint, token, validNotifications);
-                        if(posted) {//if the notifications were successfully posted to the REST service, mark them as read.
-                            log.info("POST successful, marking notifications as read...");
-                            req.uri()
-                                .queryParam(
-                                    "last_read_at",
-                                    DateFormatUtils.formatUTC(
-                                        new Date(System.currentTimeMillis()),
-                                        "yyyy-MM-dd'T'HH:mm:ss'Z'"
-                                    )
-                                ).back()
-                                .method(Request.PUT).body().set("{}").back().fetch()
-                                .as(RestResponse.class)
-                                .assertStatus(
-                                    Matchers.isOneOf(
-                                        HttpURLConnection.HTTP_OK,
-                                        HttpURLConnection.HTTP_RESET
-                                    )
-                                );
-                           log.info("Notifications marked as read!");
-                        }
-                    }
-                } catch (AssertionError aerr) {
-                    log.error("Unexpected HTTP status!", aerr);
-                } catch (IOException e) {
-                    log.error("IOException when making HTTP call!", e);
+        	try {
+        	    List<JsonObject> notifications = this.notificationsApi.fetch();
+                log.info("POST-ing " + notifications.size() + " valid notifications!");
+                boolean posted = this.postNotifications(handlerEndpoint, token, notifications);
+                if(posted) {//if the notifications were successfully posted to the REST service, mark them as read.
+                    log.info("POST successful, marking notifications as read...");
+                    this.notificationsApi.request().uri()
+                        .queryParam(
+                            "last_read_at",
+                            DateFormatUtils.formatUTC(
+                                new Date(System.currentTimeMillis()),
+                                "yyyy-MM-dd'T'HH:mm:ss'Z'"
+                            )
+                        ).back()
+                         .method(Request.PUT).body().set("{}").back().fetch()
+                         .as(RestResponse.class)
+                         .assertStatus(
+                             Matchers.isOneOf(
+                                 HttpURLConnection.HTTP_OK,
+                                 HttpURLConnection.HTTP_RESET
+                             )
+                         );
+                    log.info("Notifications marked as read!");
                 }
+        	} catch (AssertionError aerr) {
+                log.error("Unexpected HTTP status!", aerr);
+            } catch (IOException e) {
+                log.error("IOException when making HTTP call!", e);
             }
         }
     }
 
-    /**
-     * Validates a Github notification.<br><br>
-     * A notification is valid if the reson is "mention".<br> However, once
-     * mentioned in an issue, all the notifications from that issue will have this
-     * reason, so we also check if "url" and "last_comment_url" are the same or not. <br> 
-     * If they are the same, them the notification is not about a comment, but about close/reopen issue.
-     * 
-     * @param notification Github notification json.
-     * @return True if notification is valid; false otherwise.
-     */
-    public boolean isNotificationValid(JsonObject notification) {
-        if("mention".equals(notification.getString("reason"))) {
-            JsonObject subject = notification.getJsonObject("subject"); 
-            if(!subject.getString("url").equals(subject.getString("latest_comment_url"))) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
     /**
      * Sends simplified notifications to the REST endpoint.
      * <br><br>
