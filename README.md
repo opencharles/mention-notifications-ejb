@@ -1,13 +1,15 @@
 # mention-notifications-ejb
 An EJB that reads and posts Github mention notifications.
 
-More specifically, it checks for the logged-in user's notifications of type "mention" and posts them to a specified REST endpoint in simplified format. Only the ``repoFullName`` and ``issueNumber`` are specified - the receiver then has to implement the look-up logic in order to find and handle the proper mentioning comment. 
+More specifically, it checks for the logged-in user's notifications of type "mention" and posts them to a specified REST endpoint in simplified format. Only the ``repoFullName`` and ``issueNumber`` are sent - the receiver then has to implement the look-up logic in order to find and handle the proper mentioning comment. 
 
 Other info returned by the Github API in a Notification object would be rather useless payload since it consists mostly of links that the receiver can build on its own knowing the repo name and issue number.
 
 The main use of such a checker would be together with a Github bot account; naturally, the bot has to act upon received notifications. The bot implementation would have a rest POST endpoint to receive the notifications send by this checker.
 
 I use this in one of my projects so far and will probably use it again with others. It was initially a part of said repository but I decided to pull it out and make it reusable.
+
+BTW, I implement all the Github interaction using [this](https://github.com/jcabi/jcabi-github/) awesome library. Check it out, it also offers a mock version of the API so you can unit test your code instantly.
 
 Why not [Github WebHooks](https://developer.github.com/webhooks/)?
 A few reasons:
