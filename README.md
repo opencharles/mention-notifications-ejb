@@ -1,5 +1,6 @@
 # mention-notifications-ejb
 [![Build Status](https://travis-ci.org/opencharles/mention-notifications-ejb.svg?branch=master)](https://travis-ci.org/opencharles/mention-notifications-ejb)
+
 An EJB that reads and posts Github mention notifications.
 
 More specifically, it checks for the logged-in user's notifications of type "mention" and posts them to a specified REST endpoint in simplified format. Only the ``repoFullName`` and ``issueNumber`` are sent - the receiver then has to implement the look-up logic in order to find and handle the proper mentioning comment. 
