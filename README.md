@@ -40,4 +40,9 @@ You will need to set the following system properties. **Pay a lot of attention w
     <td><b>Mantadory</b>. Github agent's access token. It should only have permissions to check notifications, star repos and
     post comments. <b>Do not give full permissions!</b></td>
   </tr>
+  <tr>
+    <td>LOG_ROOT</td>
+    <td>string</td>
+    <td><b>Optional</b>. Place where the log files will be stored. Defaults to . (dot)</td>
+  </tr>
 </table>
