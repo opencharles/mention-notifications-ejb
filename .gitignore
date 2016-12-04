@@ -1,4 +1,14 @@
-*.class
+.idea/
+target/
+*.iml
+*.log
+/.settings/
+/bin/
+/.classpath
+/.project
+*/settings.xml
+*/pubring.gpg
+*/secring.gpg
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
