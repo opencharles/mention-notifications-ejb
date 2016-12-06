@@ -25,12 +25,13 @@
 
 package com.amihaiemil.charles.github;
 
-import static org.junit.Assert.assertTrue;
-
 import com.jcabi.http.Request;
 import com.jcabi.http.mock.MkAnswer;
 import com.jcabi.http.mock.MkContainer;
 import com.jcabi.http.mock.MkGrizzlyContainer;
+import com.jcabi.http.mock.MkQuery;
+
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -38,6 +39,7 @@ import java.util.List;
 
 import javax.json.JsonObject;
 
+import org.apache.http.HttpStatus;
 import org.junit.Test;
 
 /**
@@ -49,13 +51,13 @@ import org.junit.Test;
 @SuppressWarnings("resource")
 public class RtNotificationsTestCase {
 
-	/**
-	 * RtNotifications can fetch the notifications from the server.
-	 * @throws Exception If something goes wrong.
-	 */
-	@Test
+    /**
+     * RtNotifications can fetch the notifications from the server.
+     * @throws Exception If something goes wrong.
+     */
+    @Test
     public void fetchesNotifications() throws Exception {
-		int port = this.port();
+        int port = this.port();
         MkContainer server = new MkGrizzlyContainer()
             .next(new MkAnswer.Simple("[{\"notification\":\"first\"},{\"notification\":\"second\"}]")).start(port);
         try {
@@ -70,14 +72,33 @@ public class RtNotificationsTestCase {
             server.stop();
         }
     }
+    
+    /**
+     * RtNotifications.fetch throws assertion error when the response status is not OK
+     * @throws Exception If something goes wrong.
+     */
+    @Test (expected = AssertionError.class)
+    public void fetchesNotificationsWithError() throws Exception {
+        int port = this.port();
+        MkContainer server = new MkGrizzlyContainer()
+            .next(new MkAnswer.Simple(HttpStatus.SC_BAD_REQUEST)).start(port);
+        try {
+            Notifications notifications = new RtNotifications(
+                new Reason.Fake(), "token", "http://localhost:"+port+"/"
+            );
+            notifications.fetch();
+        } finally {
+            server.stop();
+        }
+    }
 
-	/**
-	 * RtNotifications can fetch 0 notifications from the server.
-	 * @throws Exception If something goes wrong.
-	 */
-	@Test
+    /**
+     * RtNotifications can fetch 0 notifications from the server.
+     * @throws Exception If something goes wrong.
+     */
+    @Test
     public void nothingFetched() throws Exception {
-		int port = this.port();
+        int port = this.port();
         MkContainer server = new MkGrizzlyContainer()
             .next(new MkAnswer.Simple("[]")).start(port);
         try {
@@ -90,22 +111,74 @@ public class RtNotificationsTestCase {
             server.stop();
         }
     }
-
-	/**
-	 * RtNotification can return its base request.
-	 */
+    
+    /**
+     * RtNotifications can mark notifications as read with OK status response
+     * @throws Exception If something goes wrong.
+     */
     @Test
-    public void returnsRequest() {
-    	String endpoint = "www.test.com/endpoint/path/here";
-        Notifications notifications = new RtNotifications(
-            new Reason.Fake(), "token", endpoint
-        );
-        Request req = notifications.request();
-        assertTrue(req != null);
-        assertTrue(req.uri().toString().equals(endpoint));
+    public void markAsReadOk() throws Exception {
+        int port = this.port();
+        MkContainer server = new MkGrizzlyContainer()
+            .next(new MkAnswer.Simple(HttpStatus.SC_OK)).start(port);
+        try {
+            Notifications notifications = new RtNotifications(
+                new Reason.Fake(), "token", "http://localhost:"+port+"/"
+            );
+            notifications.markAsRead();
+            MkQuery req = server.take();
+            assertTrue(req.method().equals(Request.PUT));
+            assertTrue(req.body().equals("{}"));
+            assertTrue(req.uri().getQuery().contains("last_read_at="));
+        } finally {
+            server.stop();
+        }
     }
 
-	/**
+    /**
+     * RtNotifications can mark notifications as read with RESET status response.
+     * @throws Exception If something goes wrong.
+     */
+    @Test
+    public void markAsReadReset() throws Exception {
+        int port = this.port();
+        MkContainer server = new MkGrizzlyContainer()
+            .next(new MkAnswer.Simple(HttpStatus.SC_RESET_CONTENT)).start(port);
+        try {
+            Notifications notifications = new RtNotifications(
+                new Reason.Fake(), "token", "http://localhost:"+port+"/"
+            );
+            notifications.markAsRead();
+            MkQuery req = server.take();
+            assertTrue(req.method().equals(Request.PUT));
+            assertTrue(req.body().equals("{}"));
+            assertTrue(req.uri().getQuery().contains("last_read_at="));
+        } finally {
+            server.stop();
+        }
+    }
+
+    /**
+     * RtNotifications.markAsRead throws assertion error when there is an
+     * unexpected status response.
+     * @throws Exception If something goes wrong.
+     */
+    @Test (expected = AssertionError.class)
+    public void markAsReadServerNotOk() throws Exception {
+        int port = this.port();
+        MkContainer server = new MkGrizzlyContainer()
+            .next(new MkAnswer.Simple(HttpStatus.SC_INTERNAL_SERVER_ERROR)).start(port);
+        try {
+            Notifications notifications = new RtNotifications(
+                new Reason.Fake(), "token", "http://localhost:"+port+"/"
+            );
+            notifications.markAsRead();
+        } finally {
+            server.stop();
+        }
+    }
+
+    /**
      * Find a free port.
      * @return A free port.
      * @throws IOException If something goes wrong.

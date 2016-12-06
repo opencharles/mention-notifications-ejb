@@ -173,7 +173,7 @@ public class GithubNotificationsCheckTestCase {
             GithubNotificationsCheck ghnv = new GithubNotificationsCheck(
                 "http://localhost:"+port+"/", logger
             );
-            ghnv.readNotifications();
+            ghnv.check();
             Mockito.verify(logger).error(Mockito.anyString(), Mockito.any(AssertionError.class));
         } finally {
             server.stop();
@@ -192,7 +192,7 @@ public class GithubNotificationsCheckTestCase {
         GithubNotificationsCheck ghnv = new GithubNotificationsCheck(
             "http://localhost:"+this.port()+"/", logger
         );
-        ghnv.readNotifications();
+        ghnv.check();
         Mockito.verify(logger).error(Mockito.anyString(), Mockito.any(IOException.class));
     }
 
@@ -206,7 +206,7 @@ public class GithubNotificationsCheckTestCase {
         GithubNotificationsCheck ghnv = new GithubNotificationsCheck(
             "http://localhost:8080/", logger
         );
-        ghnv.readNotifications();
+        ghnv.check();
         Mockito.verify(logger).error(
             "Missing github.auth.token system property! Please specify the Github's agent authorization token!"
        );
@@ -223,7 +223,7 @@ public class GithubNotificationsCheckTestCase {
         GithubNotificationsCheck ghnv = new GithubNotificationsCheck(
             "http://localhost:8080/", logger
         );
-        ghnv.readNotifications();
+        ghnv.check();
         Mockito.verify(logger).error(
             "Missing charles.rest.roken system property! Please specify the REST endpoint where notifications are posted!"
        );

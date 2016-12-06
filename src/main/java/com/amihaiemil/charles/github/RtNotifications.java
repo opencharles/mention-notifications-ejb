@@ -31,10 +31,13 @@ import com.jcabi.http.response.RestResponse;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.ws.rs.core.HttpHeaders;
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.hamcrest.Matchers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +53,7 @@ public final class RtNotifications implements Notifications {
     /**
      * Logger.
      */
-    private Logger log;
+    private Logger log = LoggerFactory.getLogger(RtNotifications.class.getName());
 
     /**
      * Reason for the notifications. What type of notifications
@@ -70,8 +73,7 @@ public final class RtNotifications implements Notifications {
      * @param edp String endpoint.
      */
     public RtNotifications(Reason res, String token, String edp) {
-        this.log = LoggerFactory.getLogger(RtNotifications.class.getName());
-        this.reason = res;    
+        this.reason = res;
         this.req = new ApacheRequest(edp);
         this.req.header(
             HttpHeaders.AUTHORIZATION, String.format("token %s", token)
@@ -95,12 +97,24 @@ public final class RtNotifications implements Notifications {
         return filtered;
     }
 
-    /**
-     * Return the Http request.
-     * @return
-     */
-    public Request request() {
-        return this.req;
-    }
+    @Override
+	public void markAsRead() throws IOException {
+    	this.req.uri()
+            .queryParam(
+                "last_read_at",
+                DateFormatUtils.formatUTC(
+                    new Date(System.currentTimeMillis()),
+                    "yyyy-MM-dd'T'HH:mm:ss'Z'"
+                )
+            ).back()
+            .method(Request.PUT).body().set("{}").back().fetch()
+            .as(RestResponse.class)
+            .assertStatus(
+                Matchers.isOneOf(
+                    HttpURLConnection.HTTP_OK,
+                    HttpURLConnection.HTTP_RESET
+                )
+            );		
+	}
 
 }

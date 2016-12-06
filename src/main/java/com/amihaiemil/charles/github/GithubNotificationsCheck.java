@@ -24,13 +24,10 @@
  */
 package com.amihaiemil.charles.github;
 
-import com.jcabi.http.Request;
-import com.jcabi.http.request.ApacheRequest;
-import com.jcabi.http.response.RestResponse;
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.util.Date;
 import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.Singleton;
@@ -41,10 +38,14 @@ import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.ws.rs.core.HttpHeaders;
-import org.apache.commons.lang3.time.DateFormatUtils;
+
 import org.hamcrest.Matchers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.jcabi.http.Request;
+import com.jcabi.http.request.ApacheRequest;
+import com.jcabi.http.response.RestResponse;
 
 /**
  * EJB that checks periodically for github notifications (mentions of the agent using @username).
@@ -71,7 +72,7 @@ public final class GithubNotificationsCheck {
     /**
      * Github notifications.
      */
-    private Notifications notificationsApi;
+    private Notifications notifications;
 
     /**
      * Api token.
@@ -99,15 +100,15 @@ public final class GithubNotificationsCheck {
         if(token == null) {
         	throw new IllegalStateException("Missing github.auth.token sys property!");
         }
-        this.notificationsApi = new RtNotifications(new Mention(), token, edp);
+        this.notifications = new RtNotifications(new Mention(), token, edp);
     }
 
     /**
-     * After this bean is constructed the checks are scheduled at a given interval (minutes),
-     * which defaults to 2.
+     * After this bean is constructed the checks are scheduled at a given
+     * interval (minutes).
      */
     @PostConstruct
-    public void scheduleChecks() {
+    public void schedule() {
         String checksInterval = System.getProperty("checks.interval.minutes");
         int intervalMinutes = 2;
         if(checksInterval != null && !checksInterval.isEmpty()) {
@@ -118,40 +119,24 @@ public final class GithubNotificationsCheck {
                 log.error("NumberFormatException when parsing interval " + checksInterval, ex);
             }
         }
-        timerService.createTimer(1000*60*intervalMinutes, 1000*60*intervalMinutes, null);
+        this.timerService.createTimer(1000*60*intervalMinutes, 1000*60*intervalMinutes, null);
     }
 
     /**
-     * Read notifications from the Github API when the scheduler timeout occurs.
+     * Check notifications when the scheduler timeout occurs, post them somewhere and
+     * mark them as read if the post was successful.
      */
     @Timeout
-    public void readNotifications() {
+    public void check() {
         String handlerEndpoint = System.getProperty("post.rest.endpoint");
         if(handlerEndpoint == null || handlerEndpoint.isEmpty()) {
             log.error("Missing charles.rest.roken system property! Please specify the REST endpoint where notifications are posted!");
         } else {
         	try {
-        	    List<JsonObject> notifications = this.notificationsApi.fetch();
-                log.info("POST-ing " + notifications.size() + " valid notifications!");
-                boolean posted = this.postNotifications(handlerEndpoint, token, notifications);
+                boolean posted = this.postNotifications(handlerEndpoint, token, this.notifications.fetch());
                 if(posted) {//if the notifications were successfully posted to the REST service, mark them as read.
                     log.info("POST successful, marking notifications as read...");
-                    this.notificationsApi.request().uri()
-                        .queryParam(
-                            "last_read_at",
-                            DateFormatUtils.formatUTC(
-                                new Date(System.currentTimeMillis()),
-                                "yyyy-MM-dd'T'HH:mm:ss'Z'"
-                            )
-                        ).back()
-                         .method(Request.PUT).body().set("{}").back().fetch()
-                         .as(RestResponse.class)
-                         .assertStatus(
-                             Matchers.isOneOf(
-                                 HttpURLConnection.HTTP_OK,
-                                 HttpURLConnection.HTTP_RESET
-                             )
-                         );
+                    this.notifications.markAsRead();
                     log.info("Notifications marked as read!");
                 }
         	} catch (AssertionError aerr) {

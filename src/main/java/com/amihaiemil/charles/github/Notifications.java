@@ -24,11 +24,8 @@
  */
 package com.amihaiemil.charles.github;
 
-import com.jcabi.http.Request;
-
 import java.io.IOException;
 import java.util.List;
-
 import javax.json.JsonObject;
 
 /**
@@ -41,13 +38,15 @@ public interface Notifications {
 
     /**
      * Fetch them.
-     * @return
+     * @return List of json notifications.
+     * @throws IOException if something goes wrong.
      */
-    public List<JsonObject> fetch() throws IOException;
+    List<JsonObject> fetch() throws IOException;
 
     /**
-     * Http request.
-     * @return
+     * Mark them as read.
+     * @throws IOException if something goes wrong.
      */
-    public Request request();
+    void markAsRead() throws IOException;
+
 }
