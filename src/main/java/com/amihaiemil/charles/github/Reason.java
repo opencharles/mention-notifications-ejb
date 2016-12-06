@@ -25,7 +25,6 @@
 package com.amihaiemil.charles.github;
 
 import java.util.List;
-
 import javax.json.JsonObject;
 
 /**
@@ -37,11 +36,28 @@ import javax.json.JsonObject;
  */
 public interface Reason {
 
-	/**
-	 * Filter the notification, returning just the ones that
-	 * satisfy this reason.
-	 * @param notification Unfiltered notifications.
-	 * @return List of JsonObject.
-	 */
-	public List<JsonObject> filter(List<JsonObject> notifications);
+    /**
+     * Filter the notification, returning just the ones that
+     * satisfy this reason.
+     * @param notification Unfiltered notifications.
+     * @return List of JsonObject.
+     */
+    public List<JsonObject> filter(List<JsonObject> notifications);
+
+    /**
+     * Fake used for unit tests. Doesn't do anything and returns
+     * the original list.
+     * @author Mihai Andronache (amihaiemil@gmail.com)
+     * @version $Id$
+     * @since 1.0.0
+     *
+     */
+    final static class Fake implements Reason {
+
+        @Override
+        public List<JsonObject> filter(List<JsonObject> notifications) {
+            return notifications;
+        }
+
+    }
 }

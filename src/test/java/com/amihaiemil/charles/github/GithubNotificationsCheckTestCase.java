@@ -26,24 +26,20 @@ package com.amihaiemil.charles.github;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
+import com.jcabi.http.mock.MkAnswer;
+import com.jcabi.http.mock.MkContainer;
+import com.jcabi.http.mock.MkGrizzlyContainer;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.json.Json;
 import javax.json.JsonObject;
-
 import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
-
-import com.jcabi.http.mock.MkAnswer;
-import com.jcabi.http.mock.MkContainer;
-import com.jcabi.http.mock.MkGrizzlyContainer;
 
 /**
  * Unit tests for {@link GithubNotificationsCheck}
@@ -56,69 +52,6 @@ import com.jcabi.http.mock.MkGrizzlyContainer;
 @Ignore
 public class GithubNotificationsCheckTestCase {
 
-
-    /**
-     * GithubNotificationsCheck can handle an empty notifications array.
-     * @throws Exception If something goes wrong.
-     */
-    @Test
-    public void readsEmptyNotifications() throws Exception {
-        int port = this.port();
-        MkContainer server = new MkGrizzlyContainer()
-            .next(new MkAnswer.Simple("[]")).start(port);
-        try {
-            System.setProperty("github.auth.token", "githubtoken");
-            System.setProperty("charles.rest.endpoint", "restendpointcharles");
-            Logger logger = Mockito.mock(Logger.class);
-            GithubNotificationsCheck ghnv = new GithubNotificationsCheck(
-                "http://localhost:"+port+"/", logger
-            );
-            ghnv.readNotifications();
-            Mockito.verify(logger).info("Found 0 new notifications!");
-        } finally {
-            server.stop();
-        }
-    }
-    
-    /**
-     * GithubNotificationsCheck can handle an notifications array.
-     * @throws Exception If something goes wrong.
-     */
-    @Test
-    public void readsNotifications() throws Exception {
-        int port = this.port();
-        MkContainer server = new MkGrizzlyContainer()
-            .next(new MkAnswer.Simple("[{\"notification\":\"first\"},{\"notification\":\"second\"}]"))
-            .next(new MkAnswer.Simple(200))
-            .start(port);
-        try {
-            System.setProperty("github.auth.token", "githubtoken");
-            System.setProperty("charles.rest.endpoint", "restendpointcharles");
-            Logger logger = Mockito.mock(Logger.class);
-            GithubNotificationsCheck ghnv = Mockito.spy(
-                new GithubNotificationsCheck(
-                    "http://localhost:"+port+"/", logger
-                )
-            );
-//            Mockito.doReturn(true).when(ghnv).isNotificationValid(Mockito.any(JsonObject.class));
-            Mockito.doReturn(true).when(ghnv).postNotifications(
-                Mockito.anyString(),
-                Mockito.anyString(),
-                Mockito.anyList()
-            );
-            Mockito.doCallRealMethod().when(ghnv).readNotifications();
-            
-            ghnv.readNotifications();
-            
-            Mockito.verify(logger).info("Found 2 new notifications!");
-            Mockito.verify(logger).info("POST-ing 2 valid notifications!");
-            Mockito.verify(logger).info("POST successful, marking notifications as read...");
-            Mockito.verify(logger).info("Notifications marked as read!");
-        } finally {
-            server.stop();
-        }
-    }
-    
     /**
      * GithubNotificationsCheck can post notifications successfully.
      * @throws Exception If something goes wrong.
@@ -262,7 +195,7 @@ public class GithubNotificationsCheckTestCase {
         ghnv.readNotifications();
         Mockito.verify(logger).error(Mockito.anyString(), Mockito.any(IOException.class));
     }
-    
+
     /**
      * GithubNotificationsCheck logs an error if the github auth token is missing
      * @throws Exception If something goes wrong.

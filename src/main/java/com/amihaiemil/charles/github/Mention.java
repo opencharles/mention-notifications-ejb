@@ -26,7 +26,6 @@ package com.amihaiemil.charles.github;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.json.JsonObject;
 
 /**

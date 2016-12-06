@@ -24,22 +24,19 @@
  */
 package com.amihaiemil.charles.github;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.ws.rs.core.HttpHeaders;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.jcabi.http.Request;
 import com.jcabi.http.request.ApacheRequest;
 import com.jcabi.http.response.JsonResponse;
 import com.jcabi.http.response.RestResponse;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.util.ArrayList;
+import java.util.List;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.ws.rs.core.HttpHeaders;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A Github Notification.
@@ -65,7 +62,7 @@ public final class RtNotifications implements Notifications {
      * Http request.
      */
     private Request req;
-    
+
     /**
      * Ctor.
      * @param res Reason.
@@ -82,24 +79,18 @@ public final class RtNotifications implements Notifications {
     }
 
     @Override
-    public List<JsonObject> fetch() {
-    	List<JsonObject> filtered = new ArrayList<JsonObject>();
-        try {
-            JsonArray notifications = req.fetch()
-                .as(RestResponse.class).assertStatus(HttpURLConnection.HTTP_OK)
-                .as(JsonResponse.class).json().readArray();
-            log.info("Found " + notifications.size() + " new notifications!");
-            if(notifications.size() > 0) {
-                List<JsonObject> unfiltered = new ArrayList<JsonObject>();
-                for(int i=0; i<notifications.size(); i++) {
-                    unfiltered.add(notifications.getJsonObject(i));
-                }
-                filtered = this.reason.filter(unfiltered);
+    public List<JsonObject> fetch() throws IOException {
+        List<JsonObject> filtered = new ArrayList<JsonObject>();
+        JsonArray notifications = req.fetch()
+            .as(RestResponse.class).assertStatus(HttpURLConnection.HTTP_OK)
+            .as(JsonResponse.class).json().readArray();
+        log.info("Found " + notifications.size() + " new notifications!");
+        if(notifications.size() > 0) {
+            List<JsonObject> unfiltered = new ArrayList<JsonObject>();
+            for(int i=0; i<notifications.size(); i++) {
+                unfiltered.add(notifications.getJsonObject(i));
             }
-        } catch (AssertionError aerr) {
-            log.error("Unexpected HTTP status!", aerr);
-        } catch (IOException e) {
-            log.error("IOException when making HTTP call!", e);
+            filtered = this.reason.filter(unfiltered);
         }
         return filtered;
     }
@@ -109,7 +100,7 @@ public final class RtNotifications implements Notifications {
      * @return
      */
     public Request request() {
-    	return this.req;
+        return this.req;
     }
 
 }

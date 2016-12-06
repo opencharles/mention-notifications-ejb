@@ -24,11 +24,12 @@
  */
 package com.amihaiemil.charles.github;
 
+import com.jcabi.http.Request;
+
+import java.io.IOException;
 import java.util.List;
 
 import javax.json.JsonObject;
-
-import com.jcabi.http.Request;
 
 /**
  * Github notifications.
@@ -42,7 +43,7 @@ public interface Notifications {
      * Fetch them.
      * @return
      */
-    public List<JsonObject> fetch();
+    public List<JsonObject> fetch() throws IOException;
 
     /**
      * Http request.

@@ -24,11 +24,13 @@
  */
 package com.amihaiemil.charles.github;
 
+import com.jcabi.http.Request;
+import com.jcabi.http.request.ApacheRequest;
+import com.jcabi.http.response.RestResponse;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.Date;
 import java.util.List;
-
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.Singleton;
@@ -39,15 +41,10 @@ import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.ws.rs.core.HttpHeaders;
-
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.hamcrest.Matchers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.jcabi.http.Request;
-import com.jcabi.http.request.ApacheRequest;
-import com.jcabi.http.response.RestResponse;
 
 /**
  * EJB that checks periodically for github notifications (mentions of the agent using @username).
@@ -58,7 +55,7 @@ import com.jcabi.http.response.RestResponse;
  */
 @Singleton
 @Startup
-public class GithubNotificationsCheck {
+public final class GithubNotificationsCheck {
 
     /**
      * Logger. Assigned in ctor for leveraging unit testing.
