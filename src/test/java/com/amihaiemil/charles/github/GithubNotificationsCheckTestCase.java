@@ -46,8 +46,6 @@ import org.slf4j.Logger;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id: a891be4e03923a6a56c4ed21db228b8470259d36 $
  * @since 1.0.0
- * @todo #1:1h Redesign, refactor and fix the unit tests according to the
- *  changes done in ticket 1.
  */
 @Ignore
 public class GithubNotificationsCheckTestCase {

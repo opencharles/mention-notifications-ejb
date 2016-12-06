@@ -157,6 +157,8 @@ public final class GithubNotificationsCheck {
      * @param token Authorization token between this agent and the handling REST endpoint.
      * @param notifications Github notifications.
      * @return true if the Noifications were successfully posted, false otherwise.
+     * @todo #3:1h Pull out this logic in a separate class and write unit tests for it as well.
+     *  After this is done GithubNotificationsCheckTestCase can be removed.
      */
     public boolean postNotifications(String endpoint, String token, List<JsonObject> notifications) {
         JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
