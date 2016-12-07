@@ -4,14 +4,32 @@
 	<groupId>com.amihaiemil.web</groupId>
 	<artifactId>mention-notifications-ejb</artifactId>
 	<version>0.0.1-SNAPSHOT</version><!--rrv-sed-flag-->
-	<name>Github Mention Notifications EJB</name>
-	<description>
-	    This EJB checks a Github account's mention notifications and POSTs them to a RESTful service for further processing
-	</description>
 	<packaging>jar</packaging>
 	<properties>
             <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
+	<name>${project.groupId}:${project.artifactId}</name>
+	<description>A timer EJB jar that reads and posts Github notifications</description>
+	<url>https://github.com/opencharles/mention-notifications-ejb</url>
+	<licenses>
+		<license>
+			<name>The BSD 3-Clause Licence</name>
+			<url>https://opensource.org/licenses/BSD-3-Clause</url>
+		</license>
+	</licenses>
+	<developers>
+		<developer>
+			<name>Mihai Emil Andronache</name>
+			<email>amihaiemil@gmail.com</email>
+			<url>https://github.com/amihaiemil</url>
+			<id>amihaiemil</id>
+		</developer>
+	</developers>
+	<scm>
+		<url>https://github.com/opencharles/mention-notifications-ejb</url>
+		<connection>scm:git:git://github.com/opencharles/mention-notifications-ejb.git</connection>
+		<developerConnection>scm:git:git@github.com:opencharles/mention-notifications-ejb.git</developerConnection>
+	</scm>
 	<dependencies>
 		<dependency>
 			<groupId>javax</groupId>
