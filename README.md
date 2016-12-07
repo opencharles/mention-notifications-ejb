@@ -19,6 +19,20 @@ A few reasons:
 - I don't want the users of my bot to have to configure their repos and setup the hooks.
 - Smaller load, since this checker only sends the required info.
 
+## Usage
+This is designed as a single ejb jar, to be deployed on a single server, so for this, take the "fat"
+jar from [here](https://oss.sonatype.org/service/local/repositories/releases/content/com/amihaiemil/web/mention-notifications-ejb/0.0.1/mention-notifications-ejb-0.0.1-jar-with-dependencies.jar).
+
+However, if you want to include it in your ``.war`` and you are using Maven, you can use the dependency
+
+```
+<dependency>
+    <groupId>com.amihaiemil.web</groupId>
+    <artifactId>mention-notifications-ejb</artifactId>
+    <version>0.0.1</version>
+</dependency>
+```
+
 You will need to set the following system properties. **Pay a lot of attention while configuring these, since everything relies on them**.
 
 ## EJB notifications checker sys props
