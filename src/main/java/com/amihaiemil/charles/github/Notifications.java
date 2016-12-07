@@ -25,7 +25,10 @@
 package com.amihaiemil.charles.github;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.json.Json;
 import javax.json.JsonObject;
 
 /**
@@ -49,4 +52,167 @@ public interface Notifications {
      */
     void markAsRead() throws IOException;
 
+    /**
+     * No notifications; used for unit tests.
+     */
+    final static class FakeEmptyNotifications implements Notifications {
+
+        @Override
+        public List<JsonObject> fetch() throws IOException {
+            return new ArrayList<JsonObject>();
+        }
+
+        @Override
+        public void markAsRead() throws IOException {
+            //nothing to do.            
+        }
+    }
+    
+    /**
+     * Notifications which throw ISE on markAsRead(), for unit tests.
+     */
+    final static class FakeErrorOnMarkRead implements Notifications {
+
+        @Override
+        public List<JsonObject> fetch() throws IOException {
+            return new Notifications.FakeOtherNotifications().fetch();
+        }
+
+        @Override
+        public void markAsRead() throws IOException {
+            throw new IllegalStateException ("Exception while marking as read...");
+        }
+    }
+
+    /**
+     * Notifications that contain valid "mention" ones; used for unit tests.
+     */
+    final static class FakeNotificationsWithMentions implements Notifications {
+
+        @Override
+        public List<JsonObject> fetch() throws IOException {
+            final List<JsonObject> notifications = new ArrayList<JsonObject>();
+            notifications.add(
+                this.mockNotification(
+                    "fork", "/url/here/qwe/1",
+                    "last/comment/urlq", "amihaiemil/charles"
+                )
+            );
+            notifications.add(
+                this.mockNotification(
+                    "mention", "/url/here/2",
+                    "/some/url/here/", "amihaiemil/charles"
+                )
+            );
+            notifications.add(
+                this.mockNotification(
+                    "star", "/url/here/bad/3",
+                    "/comment/url/8", "amihaiemil/charles"
+                )
+            );
+            notifications.add(
+                this.mockNotification(
+                    "mention", "/here/2",
+                    "localhost:80/here/3", "amihaiemil/charles"
+                )
+            );
+            return notifications;
+        }
+
+        @Override
+        public void markAsRead() throws IOException {
+            //nothing to do.            
+        }
+
+        /**
+         * Mock a notification json for unit tests.
+         * @param reason Reason of it.
+         * @param url Url
+         * @param lastCommentUrl Last comment url.
+         * @param repoFullName Repo name e.g. amihaiemil/eva
+         * @return Json object.
+         */
+        private JsonObject mockNotification(
+            final String reason, final String url,
+            final String lastCommentUrl, final String repoFullName
+        ) {
+            return Json.createObjectBuilder()
+                .add("reason", reason)
+                .add(
+                    "subject",
+                    Json.createObjectBuilder()
+                        .add("url", url)
+                        .add("latest_comment_url", lastCommentUrl)
+                        .build()
+                ).add(
+                    "repository",
+                    Json.createObjectBuilder()
+                        .add("full_name", repoFullName)
+                        .build()
+                ).build();
+        }
+    }
+
+    /**
+     * Notifications that do not contain valid "mention" ones; used for unit tests.
+     */
+    final static class FakeOtherNotifications implements Notifications {
+
+        @Override
+        public List<JsonObject> fetch() throws IOException {
+            final List<JsonObject> notifications = new ArrayList<JsonObject>();
+            notifications.add(
+                this.mockNotification(
+                    "fork", "/url/here/4",
+                    "last/comment/url/5", "amihaiemil/charles"
+                )
+            );
+            notifications.add(
+                this.mockNotification(
+                    "mention", "/same/here/7",
+                    "/same/here/7", "amihaiemil/charles"
+                )
+            );
+            notifications.add(
+                this.mockNotification(
+                    "star", "/url/here/asd/15",
+                    "last/comment/url/20", "amihaiemil/charles"
+                )
+            );
+            return notifications;
+        }
+
+        @Override
+        public void markAsRead() throws IOException {
+            //nothing to do.            
+        }
+        
+        /**
+         * Mock a notification json for unit tests.
+         * @param reason Reason of it.
+         * @param url Url
+         * @param lastCommentUrl Last comment url.
+         * @param repoFullName Repo name e.g. amihaiemil/eva
+         * @return Json object.
+         */
+        private JsonObject mockNotification(
+            final String reason, final String url,
+            final String lastCommentUrl, final String repoFullName
+        ) {
+            return Json.createObjectBuilder()
+                .add("reason", reason)
+                .add(
+                    "subject",
+                    Json.createObjectBuilder()
+                        .add("url", url)
+                        .add("latest_comment_url", lastCommentUrl)
+                        .build()
+                ).add(
+                    "repository",
+                    Json.createObjectBuilder()
+                        .add("full_name", repoFullName)
+                        .build()
+                ).build();
+        }
+    }
 }

@@ -71,25 +71,29 @@ public class NtPost extends AuthorizedRequest implements Post {
     @Override
     public void send() throws IOException {
         JsonArray parcel = this.pack(this.notifications.fetch());
-        log.info("Sending notifications to " + this.request().uri().toString() + " ...");
-        int status = this.request()
-            .method(Request.POST).body().set(parcel).back()
-            .fetch()
-            .as(RestResponse.class)
-            .assertStatus(
-                Matchers.isOneOf(
-                    HttpURLConnection.HTTP_OK,
-                    HttpURLConnection.HTTP_UNAUTHORIZED
-                )
-            ).status();
-        if(status == HttpURLConnection.HTTP_OK) {
-            log.info("Notifications sent successfully! Marking notifications as read...");
-            this.notifications.markAsRead();
-            log.info("Notifications marked as read!");
+        if(!parcel.isEmpty()) {
+            log.info("Sending notifications to " + this.request().uri().toString() + " ...");
+            int status = this.request()
+                .method(Request.POST).body().set(parcel).back()
+                .fetch()
+                .as(RestResponse.class)
+                .assertStatus(
+                    Matchers.isOneOf(
+                        HttpURLConnection.HTTP_OK,
+                        HttpURLConnection.HTTP_UNAUTHORIZED
+                    )
+                ).status();
+            if(status == HttpURLConnection.HTTP_OK) {
+                log.info("Notifications sent successfully! Marking notifications as read...");
+                this.notifications.markAsRead();
+                log.info("Notifications marked as read!");
+            } else {
+                log.error("Could not send, got response status: " + status);
+            }
         } else {
-            log.error("Could not send, got response status: " + status);
+            log.info("No notifications to send");
         }
-        
+
     }
 
     /**

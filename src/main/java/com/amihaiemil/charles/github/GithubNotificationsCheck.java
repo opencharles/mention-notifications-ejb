@@ -46,9 +46,9 @@ import org.slf4j.LoggerFactory;
 public final class GithubNotificationsCheck {
 
     /**
-     * Logger. Assigned in ctor for leveraging unit testing.
+     * Logger.
      */
-    private Logger log;
+    private static final Logger log = LoggerFactory.getLogger(GithubNotificationsCheck.class.getName());
 
     /**
      * Java EE timer service.
@@ -67,8 +67,7 @@ public final class GithubNotificationsCheck {
     public GithubNotificationsCheck() {
         this(
             "https://api.github.com/notifications",
-            System.getProperty("post.rest.endpoint"),
-            LoggerFactory.getLogger(GithubNotificationsCheck.class.getName())
+            System.getProperty("post.rest.endpoint")
         );
     }
 
@@ -76,10 +75,8 @@ public final class GithubNotificationsCheck {
      * Ctor.
      * @param notificationsEdp - Endpoint for Github notifications' check
      * @param receiverEdp - Endpoint where the notifications should be sent.
-     * @param logger - for leveraging unit testing.
      */
-    public GithubNotificationsCheck(String notificationsEdp, String receiverEdp, Logger logger) {
-        this.log = logger;
+    public GithubNotificationsCheck(String notificationsEdp, String receiverEdp) {
         if(receiverEdp == null || receiverEdp.isEmpty()) {
             log.error("Missing post.rest.roken system property! Please specify the REST endpoint where notifications should be posted!");
             throw new IllegalStateException ("Missing post.rest.roken system property!");
@@ -124,9 +121,9 @@ public final class GithubNotificationsCheck {
         try {
             this.post.send();
         } catch (IOException e) {
-            this.log.error("IOException when checking or sending notifications: ", e);
+            log.error("IOException when checking or sending notifications: ", e);
         } catch (AssertionError err) {
-            this.log.error("Unexpected status response when checking or sending notifications: ", err);
+            log.error("Unexpected status response when checking or sending notifications: ", err);
         }
     }
     

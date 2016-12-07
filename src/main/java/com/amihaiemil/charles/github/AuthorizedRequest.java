@@ -49,6 +49,7 @@ public abstract class AuthorizedRequest {
 
     /**
      * Ctor.
+     * @param atz Authorization that gives us the token to use.
      * @param originalEndpoint Original url for this request.
      */
     public AuthorizedRequest(Authorization atz, String originalEndpoint) {

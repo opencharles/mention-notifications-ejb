@@ -49,7 +49,7 @@ import org.junit.Test;
  * @since 1.0.0
  */
 @SuppressWarnings("resource")
-public class RtNotificationsTestCase {
+public final class RtNotificationsTestCase {
 
     /**
      * RtNotifications can fetch the notifications from the server.

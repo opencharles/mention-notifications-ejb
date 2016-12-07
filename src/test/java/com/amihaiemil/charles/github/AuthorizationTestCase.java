@@ -24,57 +24,38 @@
  */
 package com.amihaiemil.charles.github;
 
-import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-import java.util.List;
-
-import javax.json.JsonObject;
-
+import static org.junit.Assert.*;
 import org.junit.Test;
 
 /**
- * Unit tests for {@link Mention}
+ * Unit tests for {@link Authorization}
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 1.0.0
+ *
  */
-public final class MentionTestCase {
+public final class AuthorizationTestCase {
 
     /**
-     * Mention can filter an empty list.
-     * @throws IOException If something goes wrong.
+     * Authorization token can be read from system.
      */
     @Test
-    public void worksWithEmptyList() throws IOException {
-        final List<JsonObject> filtered = new Mention().filter(
-            new Notifications.FakeEmptyNotifications().fetch()
+    public void fetchesTokenFromSystem() {
+        String token = "token_for_unit_testing";
+        System.setProperty("github.auth.token", token);
+        assertTrue(
+            token.equals(
+                new Authorization.MandatoryFromSystem().token()
+            )
         );
-        assertTrue(filtered.isEmpty());
+        System.clearProperty("github.auth.token");
     }
 
     /**
-     * Mention can filter out all the notifications, if all of them are bad.
-     * @throws IOException If something goes wrong.
+     * ISE is thrown if authorization token is missing from the system.
      */
-    @Test
-    public void returnsEmptyList() throws IOException {
-    	final List<JsonObject> filtered = new Mention().filter(
-            new Notifications.FakeOtherNotifications().fetch()
-        );
-        assertTrue(filtered.isEmpty());
+    @Test (expected = IllegalStateException.class)
+    public void iseOnMissingSystemToken() {
+        new Authorization.MandatoryFromSystem().token();
     }
-
-    /**
-     * Mention can filter notifications properly.
-     * @throws IOException If something goes wrong.
-     */
-    @Test
-    public void returnsGoodNotifications() throws IOException {
-        final List<JsonObject> filtered = new Mention().filter(
-            new Notifications.FakeNotificationsWithMentions().fetch()
-        );
-        assertTrue(filtered.size() == 2);
-    }
-
 }
