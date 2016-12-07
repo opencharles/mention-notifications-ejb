@@ -113,8 +113,7 @@ public final class GithubNotificationsCheck {
     }
 
     /**
-     * Check notifications when the scheduler timeout occurs, post them somewhere and
-     * mark them as read if the post was successful.
+     * When the timeout occurs, post the notifications from Github somewhere.
      */
     @Timeout
     public void check() {
