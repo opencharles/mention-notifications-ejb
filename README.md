@@ -21,7 +21,7 @@ A few reasons:
 
 ## Usage
 This is designed as a single ejb jar, to be deployed on a single server, so for this, take the "fat"
-jar from [here](https://oss.sonatype.org/service/local/repositories/releases/content/com/amihaiemil/web/mention-notifications-ejb/0.0.1/mention-notifications-ejb-0.0.1-jar-with-dependencies.jar).
+jar from [here](https:/1.0.0/mention-notifications-ejb-1.0.0-jar-with-dependencies.jar).
 
 However, if you want to include it in your ``.war`` and you are using Maven, you can use the dependency
 
@@ -29,7 +29,7 @@ However, if you want to include it in your ``.war`` and you are using Maven, you
 <dependency>
     <groupId>com.amihaiemil.web</groupId>
     <artifactId>mention-notifications-ejb</artifactId>
-    <version>0.0.1</version>
+    <version>1.0.0</version>
 </dependency>
 ```
 
