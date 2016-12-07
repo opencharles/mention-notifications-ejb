@@ -24,10 +24,6 @@
  */
 package com.amihaiemil.charles.github;
 
-import com.jcabi.http.Request;
-import com.jcabi.http.request.ApacheRequest;
-import com.jcabi.http.response.JsonResponse;
-import com.jcabi.http.response.RestResponse;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
@@ -35,11 +31,13 @@ import java.util.Date;
 import java.util.List;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
-import javax.ws.rs.core.HttpHeaders;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.hamcrest.Matchers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.jcabi.http.Request;
+import com.jcabi.http.response.JsonResponse;
+import com.jcabi.http.response.RestResponse;
 
 /**
  * A Github Notification.
@@ -48,12 +46,12 @@ import org.slf4j.LoggerFactory;
  * @since 1.0.0
  *
  */
-public final class RtNotifications implements Notifications {
+public final class RtNotifications extends AuthorizedRequest implements Notifications {
 
     /**
      * Logger.
      */
-    private Logger log = LoggerFactory.getLogger(RtNotifications.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(RtNotifications.class.getName());
 
     /**
      * Reason for the notifications. What type of notifications
@@ -62,30 +60,39 @@ public final class RtNotifications implements Notifications {
     private Reason reason;
 
     /**
-     * Http request.
+     * Notifications' read time. Every time notifications are read, this time has to be
+     * initialized, to be used when marking notifications as read. We only want to mark the
+     * notifications we have fetched already. <br><br>
+     * If it wasn't for this, we could mark as read notifications that came in between the time
+     * we fetch() is called and markAsRead() is called.
      */
-    private Request req;
+    private String lastReadAt;
 
     /**
      * Ctor.
      * @param res Reason.
-     * @param token Github API token.
+     * @param atz Authorization that gives us the token to use.
      * @param edp String endpoint.
      */
-    public RtNotifications(Reason res, String token, String edp) {
+    public RtNotifications(Reason res, Authorization atz, String edp) {
+        super(atz, edp);
         this.reason = res;
-        this.req = new ApacheRequest(edp);
-        this.req.header(
-            HttpHeaders.AUTHORIZATION, String.format("token %s", token)
+        this.lastReadAt = DateFormatUtils.formatUTC(
+            new Date(System.currentTimeMillis()),
+            "yyyy-MM-dd'T'HH:mm:ss'Z'"
         );
     }
 
     @Override
     public List<JsonObject> fetch() throws IOException {
         List<JsonObject> filtered = new ArrayList<JsonObject>();
-        JsonArray notifications = req.fetch()
+        JsonArray notifications = this.request().fetch()
             .as(RestResponse.class).assertStatus(HttpURLConnection.HTTP_OK)
             .as(JsonResponse.class).json().readArray();
+        this.lastReadAt = DateFormatUtils.formatUTC(
+            new Date(System.currentTimeMillis()),
+            "yyyy-MM-dd'T'HH:mm:ss'Z'"
+        );
         log.info("Found " + notifications.size() + " new notifications!");
         if(notifications.size() > 0) {
             List<JsonObject> unfiltered = new ArrayList<JsonObject>();
@@ -99,14 +106,8 @@ public final class RtNotifications implements Notifications {
 
     @Override
 	public void markAsRead() throws IOException {
-    	this.req.uri()
-            .queryParam(
-                "last_read_at",
-                DateFormatUtils.formatUTC(
-                    new Date(System.currentTimeMillis()),
-                    "yyyy-MM-dd'T'HH:mm:ss'Z'"
-                )
-            ).back()
+        this.request().uri()
+            .queryParam("last_read_at", this.lastReadAt).back()
             .method(Request.PUT).body().set("{}").back().fetch()
             .as(RestResponse.class)
             .assertStatus(

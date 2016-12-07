@@ -62,7 +62,9 @@ public class RtNotificationsTestCase {
             .next(new MkAnswer.Simple("[{\"notification\":\"first\"},{\"notification\":\"second\"}]")).start(port);
         try {
             Notifications notifications = new RtNotifications(
-                new Reason.Fake(), "token", "http://localhost:"+port+"/"
+                new Reason.Fake(),
+                new Authorization.Fake(),
+                "http://localhost:"+port+"/"
             );
             List<JsonObject> found = notifications.fetch();
             assertTrue(found.size() == 2);
@@ -84,7 +86,9 @@ public class RtNotificationsTestCase {
             .next(new MkAnswer.Simple(HttpStatus.SC_BAD_REQUEST)).start(port);
         try {
             Notifications notifications = new RtNotifications(
-                new Reason.Fake(), "token", "http://localhost:"+port+"/"
+                new Reason.Fake(),
+                new Authorization.Fake(),
+                "http://localhost:"+port+"/"
             );
             notifications.fetch();
         } finally {
@@ -103,7 +107,9 @@ public class RtNotificationsTestCase {
             .next(new MkAnswer.Simple("[]")).start(port);
         try {
             Notifications notifications = new RtNotifications(
-                new Reason.Fake(), "token", "http://localhost:"+port+"/"
+                new Reason.Fake(),
+                new Authorization.Fake(),
+                "http://localhost:"+port+"/"
             );
             List<JsonObject> found = notifications.fetch();
             assertTrue(found.size() == 0);
@@ -123,7 +129,9 @@ public class RtNotificationsTestCase {
             .next(new MkAnswer.Simple(HttpStatus.SC_OK)).start(port);
         try {
             Notifications notifications = new RtNotifications(
-                new Reason.Fake(), "token", "http://localhost:"+port+"/"
+                new Reason.Fake(),
+                new Authorization.Fake(),
+                "http://localhost:"+port+"/"
             );
             notifications.markAsRead();
             MkQuery req = server.take();
@@ -146,7 +154,9 @@ public class RtNotificationsTestCase {
             .next(new MkAnswer.Simple(HttpStatus.SC_RESET_CONTENT)).start(port);
         try {
             Notifications notifications = new RtNotifications(
-                new Reason.Fake(), "token", "http://localhost:"+port+"/"
+                new Reason.Fake(),
+                new Authorization.Fake(),
+                "http://localhost:"+port+"/"
             );
             notifications.markAsRead();
             MkQuery req = server.take();
@@ -170,7 +180,9 @@ public class RtNotificationsTestCase {
             .next(new MkAnswer.Simple(HttpStatus.SC_INTERNAL_SERVER_ERROR)).start(port);
         try {
             Notifications notifications = new RtNotifications(
-                new Reason.Fake(), "token", "http://localhost:"+port+"/"
+                new Reason.Fake(),
+                new Authorization.Fake(),
+                "http://localhost:"+port+"/"
             );
             notifications.markAsRead();
         } finally {
