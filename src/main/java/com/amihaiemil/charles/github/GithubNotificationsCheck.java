@@ -67,31 +67,31 @@ public final class GithubNotificationsCheck {
     public GithubNotificationsCheck() {
         this(
             "https://api.github.com/notifications",
+            System.getProperty("post.rest.endpoint"),
             LoggerFactory.getLogger(GithubNotificationsCheck.class.getName())
         );
     }
 
     /**
      * Ctor.
-     * @param notificationsEp - Endpoint for Github notifications' check
+     * @param notificationsEdp - Endpoint for Github notifications' check
+     * @param receiverEdp - Endpoint where the notifications should be sent.
      * @param logger - for leveraging unit testing.
      */
-    public GithubNotificationsCheck(String edp, Logger logger) {
+    public GithubNotificationsCheck(String notificationsEdp, String receiverEdp, Logger logger) {
         this.log = logger;
-        String receiverEndpoint = System.getProperty("post.rest.endpoint");
-        if(receiverEndpoint == null || receiverEndpoint.isEmpty()) {
+        if(receiverEdp == null || receiverEdp.isEmpty()) {
             log.error("Missing post.rest.roken system property! Please specify the REST endpoint where notifications should be posted!");
-        } else {
-        
+            throw new IllegalStateException ("Missing post.rest.roken system property!");
         }
         this.post = new NtPost(
             new RtNotifications(
                 new Mention(),
                 new Authorization.MandatoryFromSystem(),
-                edp
+                notificationsEdp
             ),
             new Authorization.MandatoryFromSystem(),
-            receiverEndpoint
+            receiverEdp
         );
         
     }

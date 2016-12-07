@@ -69,7 +69,7 @@ public class GithubNotificationsCheckTestCase {
             Mockito.doThrow(new IllegalStateException("Unexpected IOException..."))
                 .when(logger)
                 .error(Mockito.anyString(), Mockito.any(IOException.class));
-            GithubNotificationsCheck ghnv = new GithubNotificationsCheck("", logger);
+            GithubNotificationsCheck ghnv = new GithubNotificationsCheck("", "", logger);
             
             List<JsonObject> notifications = new ArrayList<>();
             notifications.add(
@@ -106,7 +106,7 @@ public class GithubNotificationsCheckTestCase {
             Mockito.doThrow(new IllegalStateException("Unexpected IOException..."))
                 .when(logger)
                 .error(Mockito.anyString(), Mockito.any(IOException.class));
-            GithubNotificationsCheck ghnv = new GithubNotificationsCheck("", logger);
+            GithubNotificationsCheck ghnv = new GithubNotificationsCheck("", "", logger);
             
 //            assertFalse(
 //                ghnv.postNotifications("http://localhost:"+port+"/", "token", new ArrayList<JsonObject>())
@@ -129,7 +129,7 @@ public class GithubNotificationsCheckTestCase {
             .start(port);
         try {
             Logger logger = Mockito.mock(Logger.class);
-            GithubNotificationsCheck ghnv = new GithubNotificationsCheck("", logger);
+            GithubNotificationsCheck ghnv = new GithubNotificationsCheck("", "", logger);
             
 //            assertFalse(
 //                ghnv.postNotifications("http://localhost:"+port+"/", "token", new ArrayList<JsonObject>())
@@ -149,7 +149,7 @@ public class GithubNotificationsCheckTestCase {
     public void postsNotificationsIoException() throws Exception {
         int port = this.port();
         Logger logger = Mockito.mock(Logger.class);
-        GithubNotificationsCheck ghnv = new GithubNotificationsCheck("", logger);
+        GithubNotificationsCheck ghnv = new GithubNotificationsCheck("", "", logger);
 //        assertFalse(
 //            ghnv.postNotifications("http://localhost:"+this.port()+"/", "token", new ArrayList<JsonObject>())
 //        );
@@ -169,9 +169,7 @@ public class GithubNotificationsCheckTestCase {
             System.setProperty("github.auth.token", "githubtoken");
             System.setProperty("charles.rest.endpoint", "restendpointcharles");
             Logger logger = Mockito.mock(Logger.class);
-            GithubNotificationsCheck ghnv = new GithubNotificationsCheck(
-                "http://localhost:"+port+"/", logger
-            );
+            GithubNotificationsCheck ghnv = new GithubNotificationsCheck("", "", logger);
             ghnv.check();
             Mockito.verify(logger).error(Mockito.anyString(), Mockito.any(AssertionError.class));
         } finally {
@@ -188,9 +186,7 @@ public class GithubNotificationsCheckTestCase {
         System.setProperty("github.auth.token", "githubtoken");
         System.setProperty("charles.rest.endpoint", "restendpointcharles");
         Logger logger = Mockito.mock(Logger.class);
-        GithubNotificationsCheck ghnv = new GithubNotificationsCheck(
-            "http://localhost:"+this.port()+"/", logger
-        );
+        GithubNotificationsCheck ghnv = new GithubNotificationsCheck("", "", logger);
         ghnv.check();
         Mockito.verify(logger).error(Mockito.anyString(), Mockito.any(IOException.class));
     }
@@ -202,9 +198,7 @@ public class GithubNotificationsCheckTestCase {
     @Test
     public void missingGithubAuthToken() throws Exception {
         Logger logger = Mockito.mock(Logger.class);
-        GithubNotificationsCheck ghnv = new GithubNotificationsCheck(
-            "http://localhost:8080/", logger
-        );
+        GithubNotificationsCheck ghnv = new GithubNotificationsCheck("", "", logger);
         ghnv.check();
         Mockito.verify(logger).error(
             "Missing github.auth.token system property! Please specify the Github's agent authorization token!"
@@ -219,9 +213,7 @@ public class GithubNotificationsCheckTestCase {
     public void missingCharlesRestEndpoint() throws Exception {
         System.setProperty("github.auth.token", "githubtoken");
         Logger logger = Mockito.mock(Logger.class);
-        GithubNotificationsCheck ghnv = new GithubNotificationsCheck(
-            "http://localhost:8080/", logger
-        );
+        GithubNotificationsCheck ghnv = new GithubNotificationsCheck("", "", logger);
         ghnv.check();
         Mockito.verify(logger).error(
             "Missing charles.rest.roken system property! Please specify the REST endpoint where notifications are posted!"
