@@ -66,4 +66,29 @@ public interface Authorization {
         }
 
     }
+    
+    /**
+     * Appends "token " in front of the actual authorization token,
+     */
+    final static class WithTokenPrefix implements Authorization {
+
+        /**
+         * Original one.
+         */
+        private Authorization decorated;
+
+        /**
+         * Ctor.
+         * @param authorization Decorated authorization.
+         */
+        public WithTokenPrefix(Authorization authorization) {
+            this.decorated = authorization;
+        }
+
+        @Override
+        public String token() {
+            return String.format("token %s", this.decorated.token());
+        }
+        
+    }
 }

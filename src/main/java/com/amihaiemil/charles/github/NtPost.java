@@ -70,8 +70,9 @@ public class NtPost extends AuthorizedRequest implements Post {
 
     @Override
     public void send() throws IOException {
-        JsonArray parcel = this.pack(this.notifications.fetch());
-        if(!parcel.isEmpty()) {
+    	List<JsonObject> notifications = this.notifications.fetch();
+        if(!notifications.isEmpty()) {
+        	JsonArray parcel = this.pack(notifications);
             log.info("Sending notifications to " + this.request().uri().toString() + " ...");
             int status = this.request()
                 .method(Request.POST).body().set(parcel).back()
@@ -103,7 +104,7 @@ public class NtPost extends AuthorizedRequest implements Post {
      * @return JsonArray to be sent out.
      */
     private JsonArray pack(List<JsonObject> notifications) {
-        log.info("Fetched " + notifications + " notifications from Github.");
+        log.info("Fetched " + notifications.size() + " notifications from Github.");
         log.info("Simplifying notifications, we ony need the repo name and issue number...");
         JsonArrayBuilder parcel = Json.createArrayBuilder();
         for(JsonObject notification : notifications) {
