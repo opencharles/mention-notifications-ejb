@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  */
 @Singleton
 @Startup
-public final class GithubNotificationsCheck {
+public class GithubNotificationsCheck {
 
     /**
      * Logger.
@@ -84,7 +84,9 @@ public final class GithubNotificationsCheck {
         this.post = new NtPost(
             new RtNotifications(
                 new Mention(),
-                new Authorization.MandatoryFromSystem(),
+                new Authorization.WithTokenPrefix(
+                    new Authorization.MandatoryFromSystem()
+                ),
                 notificationsEdp
             ),
             new Authorization.MandatoryFromSystem(),

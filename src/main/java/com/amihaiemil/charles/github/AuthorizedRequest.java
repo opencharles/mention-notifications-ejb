@@ -64,7 +64,7 @@ public abstract class AuthorizedRequest {
     public Request request() {
         return this.req.header(
             HttpHeaders.AUTHORIZATION,
-            String.format("token %s", this.atz.token())
+            this.atz.token()
         );
     }
 
