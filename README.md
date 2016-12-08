@@ -20,7 +20,7 @@ A few reasons:
 - Smaller load, since this checker only sends the required info.
 
 ## Usage
-This is designed as a single ejb jar, to be deployed on a single server so for this, take the <a href="https://oss.sonatype.org/service/local/repositories/releases/content/com/amihaiemil/web/mention-notifications-ejb/1.0.0/mention-notifications-ejb-1.0.0-jar-with-dependencies.jar">fat</a>
+This is designed as a single ejb jar, to be deployed on a single server so for this, take the <a href="https://oss.sonatype.org/service/local/repositories/releases/content/com/amihaiemil/web/mention-notifications-ejb/1.1.0/mention-notifications-ejb-1.1.0-jar-with-dependencies.jar">fat</a>
 jar.
 
 However, if you want to include it in your ``.war`` and you are using Maven, you can use the dependency
@@ -29,7 +29,7 @@ However, if you want to include it in your ``.war`` and you are using Maven, you
 <dependency>
     <groupId>com.amihaiemil.web</groupId>
     <artifactId>mention-notifications-ejb</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
 </dependency>
 ```
 
