@@ -1,10 +1,10 @@
 # mention-notifications-ejb
 [![Build Status](https://travis-ci.org/opencharles/mention-notifications-ejb.svg?branch=master)](https://travis-ci.org/opencharles/mention-notifications-ejb)
+[![Coverage Status](https://coveralls.io/repos/github/opencharles/mention-notifications-ejb/badge.svg?branch=master)](https://coveralls.io/github/opencharles/mention-notifications-ejb?branch=master)
 
 An EJB that reads and posts Github mention notifications.
 
-More specifically, it checks for the logged-in user's notifications of type "mention" and posts them to a specified REST endpoint in simplified format. Only the ``repoFullName`` and ``issueNumber`` are sent - the receiver then has to implement the look-up logic in order to find and handle the proper mentioning comment. 
-
+More specifically, it checks for the logged-in user's notifications of type "mention" and posts them to a specified REST endpoint in **simplified format**. Only the ``repoFullName`` and ``issueNumber`` are sent - the receiver then has to implement the look-up logic in order to find and handle the proper mentioning comment. 
 Other info returned by the Github API in a Notification object would be rather useless payload since it consists mostly of links that the receiver can build on its own knowing the repo name and issue number.
 
 The main use of such a checker would be together with a Github bot account; naturally, the bot has to act upon received notifications. The bot implementation would have a rest POST endpoint to receive the notifications send by this checker.
