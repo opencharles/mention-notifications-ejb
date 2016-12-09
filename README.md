@@ -41,8 +41,8 @@ This is designed as a single ejb jar, to be deployed on a single server so for t
 jar.
 
 However, if for any reason you want to include it in your ``.war`` and you are using Maven, you can use the dependency
-But **keep in mind** the following: if you deploy your package on multiple nodes, make sure to **specify different check intervals**
-in each node. It doesn't make sense to have, let's say, 5 checkers spinning, each fetching notifications from Github at the same time.
+
+But **keep in mind** the following: if you deploy your package on multiple nodes, make sure to **specify different check intervals**. It doesn't make sense to have, let's say, 5 checkers spinning, each fetching notifications from Github at the same time.
 
 ```
 <dependency>
