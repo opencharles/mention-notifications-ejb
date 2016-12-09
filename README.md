@@ -40,7 +40,7 @@ A few reasons:
 This is designed as a single ejb jar, to be deployed on a single server so for this, take the <a href="https://oss.sonatype.org/service/local/repositories/releases/content/com/amihaiemil/web/mention-notifications-ejb/1.1.0/mention-notifications-ejb-1.1.0-jar-with-dependencies.jar">fat</a>
 jar.
 
-**It should work on any webserver** (e.g. Glassfish, Jboss, Payara, WebSphere even), it doesn't rely on proprietary property files or dubious assembly xml files. For instance, I spin it inside a Glassfish.
+**It should work on any webserver** (e.g. Glassfish, Jboss, Payara, WebSphere even), it doesn't rely on proprietary property files or dubious assembly xml files. I spin it inside a Glassfish.
 
 If, for any reason you want to include it in your ``.war`` and you are using Maven, you can use the dependency
 
