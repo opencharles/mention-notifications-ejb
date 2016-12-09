@@ -25,6 +25,7 @@ When making the HTTP Post, the checker also adds the **Authorization** header co
 
 Of course, you can leave the receiver's POST endpoint open and forget about this part, but I guess you don't go in vacation leaving your house unlocked, do you?
 
+## How I use it
 I use this in one of my projects so far and will probably use it again with others. It was initially a part of said repository but I decided to pull it out and make it reusable.
 
 BTW, I implement all the Github interaction using [this](https://github.com/jcabi/jcabi-github/) awesome library. Check it out, it also offers a mock version of the API so you can unit test your code instantly.
@@ -35,7 +36,7 @@ A few reasons:
 - I don't want the users of my bot to have to configure their repos and setup the hooks.
 - Smaller load, since this checker only sends the required info.
 
-## Usage
+## Deployment
 This is designed as a single ejb jar, to be deployed on a single server so for this, take the <a href="https://oss.sonatype.org/service/local/repositories/releases/content/com/amihaiemil/web/mention-notifications-ejb/1.1.0/mention-notifications-ejb-1.1.0-jar-with-dependencies.jar">fat</a>
 jar.
 
