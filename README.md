@@ -82,3 +82,6 @@ You will need to set the following system properties. **Pay a lot of attention w
     <td><b>Optional</b>. Place where the log files will be stored. Defaults to . (dot)</td>
   </tr>
 </table>
+
+## Contributors wanted
+Read [this](http://www.amihaiemil.com/2016/12/30/becoming-a-contributor.html) post for more details.
