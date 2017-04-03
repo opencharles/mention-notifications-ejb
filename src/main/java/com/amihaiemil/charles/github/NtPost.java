@@ -24,8 +24,6 @@
  */
 package com.amihaiemil.charles.github;
 
-import com.jcabi.http.Request;
-import com.jcabi.http.response.RestResponse;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.List;
@@ -36,6 +34,8 @@ import javax.json.JsonObject;
 import org.hamcrest.Matchers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.jcabi.http.Request;
+import com.jcabi.http.response.RestResponse;
 
 /**
  * Notifications post.
@@ -94,7 +94,6 @@ public class NtPost extends AuthorizedRequest implements Post {
         } else {
             log.info("No notifications to send");
         }
-
     }
 
     /**

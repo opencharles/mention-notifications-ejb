@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2016-2017, Mihai Emil Andronache
  * All rights reserved.
  * Redistribution and use in source and binary forms, with or without
@@ -82,12 +82,14 @@ public class GithubNotificationsCheck {
             throw new IllegalStateException ("Missing post.rest.roken system property!");
         }
         this.post = new NtPost(
-            new RtNotifications(
-                new Mention(),
-                new Authorization.WithTokenPrefix(
-                    new Authorization.MandatoryFromSystem()
-                ),
-                notificationsEdp
+            new SmartNotifications(
+                new RtNotifications(
+                    new Mention(),
+                    new Authorization.WithTokenPrefix(
+                        new Authorization.MandatoryFromSystem()
+                    ),
+                    notificationsEdp
+                )
             ),
             new Authorization.MandatoryFromSystem(),
             receiverEdp
