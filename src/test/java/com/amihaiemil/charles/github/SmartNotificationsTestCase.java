@@ -43,7 +43,7 @@ import org.mockito.Mockito;
  * @version $id$
  * @since 1.2.0
  */
-public final class SmartNotificationsTestcase {
+public final class SmartNotificationsTestCase {
     
     /**
      * SmartNotifications can skip 3 checks if the the previous
