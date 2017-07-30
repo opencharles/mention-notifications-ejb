@@ -1,6 +1,7 @@
 # mention-notifications-ejb
 
 [![DevOps By Rultor.com](http://www.rultor.com/b/opencharles/mention-notifications-ejb)](http://www.rultor.com/p/opencharles/mention-notifications-ejb)
+[![We recommend IntelliJ IDEA](http://amihaiemil.github.io/images/intellij-idea-recommend.svg)](https://www.jetbrains.com/idea/)
 [![Build Status](https://travis-ci.org/opencharles/mention-notifications-ejb.svg?branch=master)](https://travis-ci.org/opencharles/mention-notifications-ejb)
 [![Coverage Status](https://coveralls.io/repos/github/opencharles/mention-notifications-ejb/badge.svg?branch=master)](https://coveralls.io/github/opencharles/mention-notifications-ejb?branch=master)
 
