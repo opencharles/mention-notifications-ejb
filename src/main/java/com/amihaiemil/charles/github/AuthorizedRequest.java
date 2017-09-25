@@ -54,7 +54,7 @@ public abstract class AuthorizedRequest {
      * @param originalEndpoint Original url for this request.
      */
     public AuthorizedRequest(Authorization atz, String originalEndpoint) {
-        this.req = new ApacheRequest(originalEndpoint).through(TrustedWire.class);
+        this.req = new ApacheRequest(originalEndpoint);
         this.atz = atz;
     }
 

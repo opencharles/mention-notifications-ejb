@@ -31,6 +31,8 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
+
+import com.jcabi.http.wire.TrustedWire;
 import org.hamcrest.Matchers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,7 +77,9 @@ public class NtPost extends AuthorizedRequest implements Post {
         	JsonArray parcel = this.pack(notifications);
             log.info("Sending notifications to " + this.request().uri().toString() + " ...");
             int status = this.request()
-                .method(Request.POST).body().set(parcel).back()
+                .method(Request.POST)
+                .body().set(parcel).back()
+                .through(TrustedWire.class)
                 .fetch()
                 .as(RestResponse.class)
                 .assertStatus(
