@@ -40,7 +40,7 @@ A few reasons:
 - Smaller load, since this checker only sends the required info.
 
 ## Deployment
-This is designed as a single ejb jar, to be deployed on a single server so for this, take the <a href="https://oss.sonatype.org/service/local/repositories/releases/content/com/amihaiemil/web/mention-notifications-ejb/1.1.1/mention-notifications-ejb-1.1.1-jar-with-dependencies.jar">fat</a>
+This is designed as a single ejb jar, to be deployed on a single server so for this, take the <a href="https://oss.sonatype.org/service/local/repositories/releases/content/com/amihaiemil/web/mention-notifications-ejb/1.1.2/mention-notifications-ejb-1.1.2-jar-with-dependencies.jar">fat</a>
 jar.
 
 **It should work on any webserver** (e.g. Glassfish, Jboss, Payara, WebSphere even), it doesn't rely on proprietary property files or dubious assembly xml files. I spin it inside a Glassfish.
@@ -53,7 +53,7 @@ But **keep in mind** the following: if you deploy your package on multiple nodes
 <dependency>
     <groupId>com.amihaiemil.web</groupId>
     <artifactId>mention-notifications-ejb</artifactId>
-    <version>1.1.1</version>
+    <version>1.1.2</version>
 </dependency>
 ```
 
