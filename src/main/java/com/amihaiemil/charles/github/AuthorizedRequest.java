@@ -27,6 +27,7 @@ package com.amihaiemil.charles.github;
 import javax.ws.rs.core.HttpHeaders;
 import com.jcabi.http.Request;
 import com.jcabi.http.request.ApacheRequest;
+import com.jcabi.http.request.JdkRequest;
 import com.jcabi.http.wire.TrustedWire;
 
 /**
@@ -54,7 +55,7 @@ public abstract class AuthorizedRequest {
      * @param originalEndpoint Original url for this request.
      */
     public AuthorizedRequest(Authorization atz, String originalEndpoint) {
-        this.req = new ApacheRequest(originalEndpoint);
+        this.req = new JdkRequest(originalEndpoint);
         this.atz = atz;
     }
 

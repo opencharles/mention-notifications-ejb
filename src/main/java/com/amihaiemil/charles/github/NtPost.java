@@ -89,11 +89,11 @@ public class NtPost extends AuthorizedRequest implements Post {
                     )
                 ).status();
             if(status == HttpURLConnection.HTTP_OK) {
-                log.info("Notifications sent successfully! Marking notifications as read...");
+                log.info(notifications.size() + " notifications sent successfully! Marking notifications as read...");
                 this.notifications.markAsRead();
-                log.info("Notifications marked as read!");
+                log.info(notifications.size() + " notifications marked as read!");
             } else {
-                log.error("Could not send, got response status: " + status);
+                log.error("Could not send notifications, got response status: " + status);
             }
         } else {
             log.info("No notifications to send");

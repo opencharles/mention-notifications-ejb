@@ -30,16 +30,12 @@ import com.jcabi.http.mock.MkAnswer;
 import com.jcabi.http.mock.MkContainer;
 import com.jcabi.http.mock.MkGrizzlyContainer;
 import com.jcabi.http.mock.MkQuery;
-
 import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.ServerSocket;
 import java.util.List;
-
 import javax.json.JsonObject;
-
-import org.apache.http.HttpStatus;
 import org.junit.Test;
 
 /**
@@ -83,7 +79,7 @@ public final class RtNotificationsTestCase {
     public void fetchesNotificationsWithError() throws Exception {
         int port = this.port();
         MkContainer server = new MkGrizzlyContainer()
-            .next(new MkAnswer.Simple(HttpStatus.SC_BAD_REQUEST)).start(port);
+            .next(new MkAnswer.Simple(HttpURLConnection.HTTP_BAD_REQUEST)).start(port);
         try {
             Notifications notifications = new RtNotifications(
                 new Reason.Fake(),
@@ -126,7 +122,7 @@ public final class RtNotificationsTestCase {
     public void markAsReadOk() throws Exception {
         int port = this.port();
         MkContainer server = new MkGrizzlyContainer()
-            .next(new MkAnswer.Simple(HttpStatus.SC_OK)).start(port);
+            .next(new MkAnswer.Simple(HttpURLConnection.HTTP_OK)).start(port);
         try {
             Notifications notifications = new RtNotifications(
                 new Reason.Fake(),
@@ -151,7 +147,7 @@ public final class RtNotificationsTestCase {
     public void markAsReadReset() throws Exception {
         int port = this.port();
         MkContainer server = new MkGrizzlyContainer()
-            .next(new MkAnswer.Simple(HttpStatus.SC_RESET_CONTENT)).start(port);
+            .next(new MkAnswer.Simple(HttpURLConnection.HTTP_RESET)).start(port);
         try {
             Notifications notifications = new RtNotifications(
                 new Reason.Fake(),
@@ -177,7 +173,7 @@ public final class RtNotificationsTestCase {
     public void markAsReadServerNotOk() throws Exception {
         int port = this.port();
         MkContainer server = new MkGrizzlyContainer()
-            .next(new MkAnswer.Simple(HttpStatus.SC_INTERNAL_SERVER_ERROR)).start(port);
+            .next(new MkAnswer.Simple(HttpURLConnection.HTTP_INTERNAL_ERROR)).start(port);
         try {
             Notifications notifications = new RtNotifications(
                 new Reason.Fake(),
