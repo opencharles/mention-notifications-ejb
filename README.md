@@ -26,7 +26,7 @@ When making the HTTP Post, the checker also adds the **Authorization** header co
 1. Security. You want to make sure nobody starts POSTing randomly to your receiver's endpoint.
 2. To make sure that both the checker and the bot use the same Github account. It wouldn't make a lot of sense for account A to act on the notifications of account B.
 
-However, this is up to you to implement - you can leave the receiver's POST endpoint open and forget about this part, but I guess you don't go in vacation leaving your house unlocked, do you?
+However, this is up to you to implement - you can leave the receiver's POST endpoint open and forget about this part.
 
 ## How I use it
 I use this in one of my projects so far and will probably use it again with others. It was initially a part of said repository but I decided to pull it out and make it reusable.
@@ -47,7 +47,7 @@ jar.
 
 If, for any reason you want to include it in your ``.war`` and you are using Maven, you can use the dependency
 
-But **keep in mind** the following: if you deploy your package on multiple nodes, make sure to **specify different check intervals**. It doesn't make sense to have, let's say, 5 checkers spinning, each fetching notifications from Github at the same time.
+But **keep in mind** the following: if you deploy your package on multiple nodes, make sure to **specify different check intervals**. It doesn't make sense to have more checkers spinning, each fetching notifications from Github at the same time.
 
 ```
 <dependency>
@@ -58,6 +58,7 @@ But **keep in mind** the following: if you deploy your package on multiple nodes
 ```
 
 You will need to set the following system properties. **Pay a lot of attention while configuring these, since everything relies on them**.
+It can check and send the notifications of more accounds. You just have to specify all the tokens and endpoints in the github.auth.tokens and post.endpoints respectively (separated by ``;``).
 
 ## EJB notifications checker sys props
 <table>
@@ -70,14 +71,14 @@ You will need to set the following system properties. **Pay a lot of attention w
     <td><b>Optional</b>. Minutes that should <br> pass between checks. Defaults to 2.</td>
   </tr>
   <tr>
-    <td>post.rest.endpoint</td>
+    <td>post.endpoints</td>
     <td>**path/to/post/resource**/</td>
-    <td><b>Mantadory</b>. Rest endpoint <br>where the found notifications should be sent for handling.</td>
+    <td><b>Mantadory</b>. Rest endpoints <br>where the found notifications should be sent for handling.</td>
   </tr>
   <tr>
-    <td>github.auth.token</td>
+    <td>github.auth.tokens</td>
     <td>string</td>
-    <td><b>Mantadory</b>. Github agent's access token. It should have limited permissions. For instance, I only let it fetch notifications, star repos and post comments. <b>Do not give full permissions!</b></td>
+    <td><b>Mantadory</b>. Github agents' access tokens. They should have limited permissions, access to read the notifications is enough.</td>
   </tr>
   <tr>
     <td>LOG_ROOT</td>
