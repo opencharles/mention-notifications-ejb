@@ -14,20 +14,6 @@ Other info returned by the Github API in a Notification object would be rather u
 ## The main use
 The use of such a checker would be together with a Github bot account; naturally, the bot has to act upon received notifications. The bot implementation would have a rest POST endpoint to receive the notifications sent by this checker.
 
-## Authorization
-As the table at the end says, you need to specify the system property **github.auth.token**. This is used in two places:
-
-When calling the Github API to fetch notifications.
-
-and
-
-When making the HTTP Post, the checker also adds the **Authorization** header containing **github.auth.token**. This is for 2 reasons:
-
-1. Security. You want to make sure nobody starts POSTing randomly to your receiver's endpoint.
-2. To make sure that both the checker and the bot use the same Github account. It wouldn't make a lot of sense for account A to act on the notifications of account B.
-
-However, this is up to you to implement - you can leave the receiver's POST endpoint open and forget about this part.
-
 ## How I use it
 I use this in one of my projects so far and will probably use it again with others. It was initially a part of said repository but I decided to pull it out and make it reusable.
 
