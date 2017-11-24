@@ -71,11 +71,11 @@ public final class RtNotifications extends AuthorizedRequest implements Notifica
     /**
      * Ctor.
      * @param res Reason.
-     * @param atz Authorization that gives us the token to use.
+     * @param token Token used with this request.
      * @param edp String endpoint.
      */
-    public RtNotifications(Reason res, Authorization atz, String edp) {
-        super(atz, edp);
+    public RtNotifications(Reason res, String token, String edp) {
+        super(token, edp);
         this.reason = res;
         this.lastReadAt = DateFormatUtils.formatUTC(
             new Date(System.currentTimeMillis()),

@@ -57,44 +57,15 @@ public class GithubNotificationsCheck {
     private TimerService timerService;
 
     /**
-     * Post of notifications.
+     * Posts of notifications.
      */
-    private Post post;
+    private final Post[] posts;
 
     /**
      * Default Ctor.
      */
     public GithubNotificationsCheck() {
-        this(
-            "https://api.github.com/notifications",
-            System.getProperty("post.rest.endpoint")
-        );
-    }
-
-    /**
-     * Ctor.
-     * @param notificationsEdp - Endpoint for Github notifications' check
-     * @param receiverEdp - Endpoint where the notifications should be sent.
-     */
-    public GithubNotificationsCheck(String notificationsEdp, String receiverEdp) {
-        if(receiverEdp == null || receiverEdp.isEmpty()) {
-            log.error("Missing post.rest.roken system property! Please specify the REST endpoint where notifications should be posted!");
-            throw new IllegalStateException ("Missing post.rest.roken system property!");
-        }
-        this.post = new NtPost(
-            new SmartNotifications(
-                new RtNotifications(
-                    new Mention(),
-                    new Authorization.WithTokenPrefix(
-                        new Authorization.MandatoryFromSystem()
-                    ),
-                    notificationsEdp
-                )
-            ),
-            new Authorization.MandatoryFromSystem(),
-            receiverEdp
-        );
-        
+        this.posts = new FromSystem().posts();
     }
 
     /**
@@ -122,7 +93,9 @@ public class GithubNotificationsCheck {
     @Timeout
     public void check() {
         try {
-            this.post.send();
+            for(final Post post : this.posts) {
+                post.send();
+            }
         } catch (IOException e) {
             log.error("IOException when checking or sending notifications: ", e);
         } catch (AssertionError err) {

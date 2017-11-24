@@ -59,7 +59,7 @@ public final class RtNotificationsTestCase {
         try {
             Notifications notifications = new RtNotifications(
                 new Reason.Fake(),
-                new Authorization.Fake(),
+                "fake_token",
                 "http://localhost:"+port+"/"
             );
             List<JsonObject> found = notifications.fetch();
@@ -83,7 +83,7 @@ public final class RtNotificationsTestCase {
         try {
             Notifications notifications = new RtNotifications(
                 new Reason.Fake(),
-                new Authorization.Fake(),
+                "fake_token",
                 "http://localhost:"+port+"/"
             );
             notifications.fetch();
@@ -104,7 +104,7 @@ public final class RtNotificationsTestCase {
         try {
             Notifications notifications = new RtNotifications(
                 new Reason.Fake(),
-                new Authorization.Fake(),
+                "fake_token",
                 "http://localhost:"+port+"/"
             );
             List<JsonObject> found = notifications.fetch();
@@ -126,7 +126,7 @@ public final class RtNotificationsTestCase {
         try {
             Notifications notifications = new RtNotifications(
                 new Reason.Fake(),
-                new Authorization.Fake(),
+                "fake_token",
                 "http://localhost:"+port+"/"
             );
             notifications.markAsRead();
@@ -151,7 +151,7 @@ public final class RtNotificationsTestCase {
         try {
             Notifications notifications = new RtNotifications(
                 new Reason.Fake(),
-                new Authorization.Fake(),
+                "fake_token",
                 "http://localhost:"+port+"/"
             );
             notifications.markAsRead();
@@ -177,7 +177,7 @@ public final class RtNotificationsTestCase {
         try {
             Notifications notifications = new RtNotifications(
                 new Reason.Fake(),
-                new Authorization.Fake(),
+                "fake_token",
                 "http://localhost:"+port+"/"
             );
             notifications.markAsRead();

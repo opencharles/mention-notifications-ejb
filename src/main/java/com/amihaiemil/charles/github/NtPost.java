@@ -60,13 +60,13 @@ public class NtPost extends AuthorizedRequest implements Post {
     /**
      * Ctor.
      * @param notifications Notifications for this Post to send.
-     * @param atz Authorization that gives us the token to use.
+     * @param token Token used with this request.
      * @param endpoint Rest POST endpoint to send these notifications to.
      */
     public NtPost(
-        Notifications notifications, Authorization atz, String endpoint
+        Notifications notifications, String token, String endpoint
     ) {
-        super(atz, endpoint);
+        super(token, endpoint);
         this.notifications = notifications;
     }
 

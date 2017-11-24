@@ -63,15 +63,14 @@ public final class NtPostTestCase {
             .next(new MkAnswer.Simple(HttpURLConnection.HTTP_OK))
             .start(port);
         try {
-        	Notifications notifications = new Notifications.FakeOtherNotifications();
-            Authorization fake = new Authorization.Fake();
-        	Post ntp = new NtPost(
-            	notifications, fake, "http://localhost:"+port+"/"
+            Notifications notifications = new Notifications.FakeOtherNotifications();
+            Post ntp = new NtPost(
+            	notifications, "fake_token", "http://localhost:"+port+"/"
             );
             ntp.send();
             MkQuery request = server.take();
             String auth = request.headers().get(HttpHeaders.AUTHORIZATION).get(0);
-            assertTrue(auth.contains(fake.token()));
+            assertTrue(auth.contains("fake_token"));
             JsonArray received = Json.createReader(
                 new ByteArrayInputStream(request.binary())
             ).readArray();
@@ -94,9 +93,8 @@ public final class NtPostTestCase {
     @Test
     public void doesntSendEmptyParcel() throws Exception {
         Notifications notifications = new Notifications.FakeEmptyNotifications();
-        Authorization fake = new Authorization.Fake();
         Post ntp = new NtPost(
-            notifications, fake, "http://localhost:8080/"
+            notifications, "fake_token", "http://localhost:8080/"
         );
         ntp.send();
     }
@@ -112,15 +110,14 @@ public final class NtPostTestCase {
             .next(new MkAnswer.Simple(HttpURLConnection.HTTP_UNAUTHORIZED))
             .start(port);
         try {
-        	Notifications notifications = new Notifications.FakeErrorOnMarkRead();
-            Authorization fake = new Authorization.Fake();
-        	Post ntp = new NtPost(
-            	notifications, fake, "http://localhost:"+port+"/"
+            Notifications notifications = new Notifications.FakeErrorOnMarkRead();
+            Post ntp = new NtPost(
+            	notifications, "fake_token", "http://localhost:"+port+"/"
             );
             ntp.send();
             MkQuery request = server.take();
             String auth = request.headers().get(HttpHeaders.AUTHORIZATION).get(0);
-            assertTrue(auth.contains(fake.token()));
+            assertTrue(auth.contains("fake_token"));
         } finally {
             server.stop();
         }
@@ -138,14 +135,13 @@ public final class NtPostTestCase {
             .start(port);
         try {
         	Notifications notifications = new Notifications.FakeErrorOnMarkRead();
-            Authorization fake = new Authorization.Fake();
         	Post ntp = new NtPost(
-            	notifications, fake, "http://localhost:"+port+"/"
+            	notifications, "fake_token", "http://localhost:"+port+"/"
             );
             ntp.send();
             MkQuery request = server.take();
             String auth = request.headers().get(HttpHeaders.AUTHORIZATION).get(0);
-            assertTrue(auth.contains(fake.token()));
+            assertTrue(auth.contains("fake_token"));
         } finally {
             server.stop();
         }

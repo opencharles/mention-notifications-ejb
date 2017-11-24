@@ -26,9 +26,7 @@ package com.amihaiemil.charles.github;
 
 import javax.ws.rs.core.HttpHeaders;
 import com.jcabi.http.Request;
-import com.jcabi.http.request.ApacheRequest;
 import com.jcabi.http.request.JdkRequest;
-import com.jcabi.http.wire.TrustedWire;
 
 /**
  * Authorized request sent by this checker.
@@ -45,18 +43,18 @@ public abstract class AuthorizedRequest {
     private Request req;
 
     /**
-     * Authorization used with this request.
+     * Token used with this request.
      */
-    private Authorization atz;
+    private String token;
 
     /**
      * Ctor.
-     * @param atz Authorization that gives us the token to use.
+     * @param token Token used with this request.
      * @param originalEndpoint Original url for this request.
      */
-    public AuthorizedRequest(Authorization atz, String originalEndpoint) {
+    public AuthorizedRequest(String token, String originalEndpoint) {
         this.req = new JdkRequest(originalEndpoint);
-        this.atz = atz;
+        this.token = token;
     }
 
     /**
@@ -66,7 +64,7 @@ public abstract class AuthorizedRequest {
     public Request request() {
         return this.req.header(
             HttpHeaders.AUTHORIZATION,
-            this.atz.token()
+            token
         );
     }
 

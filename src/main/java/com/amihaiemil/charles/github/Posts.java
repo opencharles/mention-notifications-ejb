@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2016-2017, Mihai Emil Andronache
  * All rights reserved.
  * Redistribution and use in source and binary forms, with or without
@@ -25,70 +25,17 @@
 package com.amihaiemil.charles.github;
 
 /**
- * Authorization used by the requests made.
+ *
+ * All the Posts that the checker performs.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @since 1.0.0
+ * @since 2.0.0
  */
-public interface Authorization {
-
-    /**
-     * Fetch the token used in authorized requests.
-     * @return String token.
-     */
-    public String token();
-
-    /**
-     * Fake authorization, for unit tests.
-     */
-    final static class Fake implements Authorization {
-
-        @Override
-        public String token() {
-            return "fake_token";
-        }
-
-    }
-
-    /**
-     * Get the token from the system properties. Mandatory, so if no
-     * token is found, ISE is thrown.
-     */
-    final static class MandatoryFromSystem implements Authorization {
-
-        @Override
-        public String token() {
-            String token = System.getProperty("github.auth.token");
-            if(token == null) {
-                throw new IllegalStateException("Missing github.auth.token sys property!");
-            }
-            return token;
-        }
-
-    }
+public interface Posts {
     
     /**
-     * Appends "token " in front of the actual authorization token,
+     * Posts to perform.
+     * @return Array of Post.
      */
-    final static class WithTokenPrefix implements Authorization {
-
-        /**
-         * Original one.
-         */
-        private Authorization decorated;
-
-        /**
-         * Ctor.
-         * @param authorization Decorated authorization.
-         */
-        public WithTokenPrefix(Authorization authorization) {
-            this.decorated = authorization;
-        }
-
-        @Override
-        public String token() {
-            return String.format("token %s", this.decorated.token());
-        }
-        
-    }
+    Post[] posts();
 }
