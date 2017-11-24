@@ -66,12 +66,12 @@ public final class FromSystem implements Posts{
                 new SmartNotifications(
                     new RtNotifications(
                         new Mention(),
-                        "token " + this.githubTokens[i],
+                        "token " + this.githubTokens[i].trim(),
                         "https://api.github.com/notifications"
                     )
                 ),
-                this.githubTokens[i],
-                this.postEndpoints[i]
+                this.githubTokens[i].trim(),
+                this.postEndpoints[i].trim()
              );
         }
         return posts;
